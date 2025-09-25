@@ -1,0 +1,307 @@
+package main;
+
+import java.awt.event.*;
+import java.util.Arrays;
+import javax.swing.JButton;
+
+public class Calc_Scientific implements ActionListener {
+
+	Calc_portal cp = new Calc_portal();
+	
+	JButton[] numb = new JButton[13];
+	JButton[] func = new JButton[20];
+	
+	String[] name = new String[20];
+	
+	int x;
+	int y;
+	int sizex;
+	int sizey;
+	int tracker;
+	int place_tracker;
+	int number_number_tracker = 0;
+	int op_tracker = 0;
+	int result_tracker = 0;
+	int result_tracker_length;
+	int current_number;
+	int last_number;
+	int current_number_screen;
+	int result_number;
+	int computed;
+	int[] [] number_number = new int[999] [999];
+	int[] order = new int [999];
+	int[] result = new int[999];
+	int number_of_times_devided;
+	boolean more_than_one = true;
+	boolean degrees;
+	boolean open_parenthesis = false;
+	boolean last_one_current_number = true;
+	
+	public void start(){
+		for (int i = 0; i < numb.length; i++) {
+			if(i == 0) {
+				x = 380;
+				y = 500;
+				name[i] = Integer.toString(i);
+			}
+			if (0 < i && i < 4)  {
+				
+				x = 250 + (65*i);
+				y = 435;
+				name[i] = Integer.toString(i);
+			}
+			if (3 < i && i < 7)  {
+				
+				x = 250 + (65*(i-3));
+				y = 370;
+				name[i] = Integer.toString(i);
+			}	
+			if (6 < i && i < 10) {
+				x = 250 + (65*(i-6));
+				y = 305;
+				name[i] = Integer.toString(i);
+			}
+			if(i == 11) {
+				x = 120;
+				y = 500;
+				name[i] = "\u03C0";
+			}
+			if(i == 12) {
+				x = 185;
+				y = 500;
+				name[i] = "e";
+			}
+			
+			numb[i] = new JButton(name[i]);
+			numb[i].setSize(60, 60);
+			numb[i].setLocation(x, y);
+			numb[i].addActionListener(this);
+			Main.window.add(numb[i]);
+
+		}
+		for (int i = 0; i < func.length; i++) {
+			
+			switch(i) {
+				case 0:
+					x = 510;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "+";
+				break;
+				case 1:
+					x = 510;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "-";
+				break;
+				case 2:
+					x = 510;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "X";
+				break;
+				case 3:
+					x = 510;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "\u00F7";
+				break;
+				case 4:
+					x = 445;
+					y = 500;
+					name[i] = "=";
+				break;
+				case 5:
+					x = 510;
+					y = 240;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "CA";
+				break;
+				case 6:
+					x = 250;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "( )";
+				break;
+				case 7:
+					x = 250;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "^";
+				break;
+				case 8:
+					x = 250;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "\u221A";
+				break;
+				case 9:
+					x = 250;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Log";
+				break;
+				case 10:
+					x = 185;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Sin";
+				break;
+				case 11:
+					x = 185;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Cos";
+				break;
+				case 12:
+					x = 185;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Tan";
+				break;
+				case 13:
+					x = 315;
+					y = 240;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "2\u207F\u1D48";
+				break;
+				case 14:
+					x = 380;
+					y = 240;
+					sizex = 125;
+					sizey = 60;
+					name[i] = "Portal";
+				break;
+				case 15:
+					x = 315;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = ".";
+				break;
+				case 16:
+					x = 185;
+					y = 240;
+					sizex = 125;
+					sizey = 60;
+					name[i] = "Dec";
+				break;
+
+			}
+
+			func[i] = new JButton(name[i]);
+			func[i].setSize(sizex, sizey);
+			func[i].setLocation(x, y);
+			func[i].addActionListener(this);
+			Main.window.add(func[i]);
+
+		}
+
+	}
+	public void number_maker(int i) {
+		if (i < 10) {
+		current_number = (int) ( i + current_number*10);
+		place_tracker++;
+		}
+		// FIX TO TREAT LIKE A FINISHED NUMBER --> Make finish the calculator first then come back to this
+//		if (i == 11) {
+//			current_number = (int) ( Math.PI + current_number*10);
+//			place_tracker++;
+//			System.out.println("pi");
+//		}
+//		if (i == 12) {
+//			current_number = (int) ( Math.E + current_number*10);
+//			place_tracker++;
+//			System.out.println("e");
+//		}
+		more_than_one = false;
+		System.out.println("current_number "+current_number);
+	}
+	public void number_changer(int i) {
+		
+		if(i <= 3) {
+			more_than_one = false;
+			current_number = 0;
+			
+		}
+		if (i == 4) {
+			/* number number 
+			 * [this is the numbers]  --> [1, 4, 3, 6, 89, 10] --> just use current number then add the space its in. i.e. number_number_tracker++
+			 * [this is the parenthesis] --> [1, 2, 2, 0, 0, 1, 1] --> 0 means no parenthesis, 1 means one set of parenthesis --next line--
+			 * and 2 means two sets of parenthesis. so when we do our math we will reorder we check the location of the heigest order --next line--
+			 * parenthesis and put it at the front. e.x the first, and second numbers have two parenthesis so they will go to the zeroth, --nec\xt line--
+			 * and first place along with it's operations. we need to find a way to selectively alter an array 
+			 * order
+			 * [this is the operation]  --> [0, 1, 1, 1, 0] --> When the perenthsis button is pressed the it will either change from --- next line---
+			 * 0 to 1 (I will later change this to allow for more sets of perenthsis). Then it will move number where the order value --- next line---
+			 * is equle to one to the first section. so it will 
+			 */
+		}
+		if (i == 5) {
+			tracker = 0;
+			number_number_tracker = 0;
+			op_tracker = 0;
+			result_tracker = 0;
+			Arrays.fill(number_number, 0);
+			Arrays.fill(result, 0);
+			computed = 0;
+			number_of_times_devided = 0;
+		}
+		if (i == 6) {
+			open_parenthesis = !open_parenthesis;
+		}
+		if (i == 14) {
+			System.out.println("back to portal");
+			for (int n = 0; n <func.length; n++) {
+			Main.window.remove(func[n]);
+			}
+			for (int n = 0; n <numb.length; n++) {
+			Main.window.remove(numb[n]);
+			}
+			cp.Start();
+
+		}
+		if (i == 16) {
+			degrees = !degrees;
+			if (!degrees) {
+			func[16].setText("RAD");
+
+			}
+			if (degrees) {
+			func[16].setText("DEG");
+			}
+
+		}
+
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		for(int i = 0; i < numb.length; i++) {
+			if (e.getSource() == numb[i]) {
+				number_maker(i);
+			}
+		}
+		for(int i = 0; i < func.length; i++) {
+			if (e.getSource() == func[i]) {
+				number_changer(i);
+			}
+		}
+	}
+	
+}
