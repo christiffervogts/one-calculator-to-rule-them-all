@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.event.*;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -16,14 +15,14 @@ public class Calc_portal implements ActionListener{
 	int sizey;
 
 	public Calc_portal() {
-		Main.window.repaint();
-		Main.window.revalidate();
 	}
 	public void Start() {
 		Main.window.setSize(350, 350);
 		Main.window.setTitle("Calculator Portal");
 		Main.window.setIconImage(new ImageIcon("icon/icon/Calc_logo.png").getImage());
-		for (int i = 0; i < Types.length; i++) {
+		Main.window.repaint();
+		Main.window.revalidate();
+		for (int i = 0; i < 2; i++) {
 			
 			switch(i){
 			
@@ -48,7 +47,6 @@ public class Calc_portal implements ActionListener{
 			Types[i].setLocation(x, y);
 			Main.window.add(Types[i]);
 			Types[i].addActionListener(this);
-
 		}
 
 	}
