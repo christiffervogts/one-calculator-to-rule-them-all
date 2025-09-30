@@ -1,11 +1,8 @@
 package main;
 
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiFunction;
-
 import javax.swing.JButton;
 
 public class Calc_Scientific implements ActionListener {
@@ -26,9 +23,9 @@ public class Calc_Scientific implements ActionListener {
 	int number_number_tracker = 0;
 	int result_tracker = 0;
 	int result_tracker_length;
-	int current_number;
-	int result_number;
-	int computed;
+	double current_number;
+	double result_number;
+	double computed;
 	double left;
 	double right;
 	double prespecial;
@@ -42,6 +39,7 @@ public class Calc_Scientific implements ActionListener {
 	boolean more_than_one = true;
 	boolean degrees;
 	boolean last_one_current_number = true;
+	boolean last_numb_special = false;
 	
 	public void start(){
 		Arrays.fill(parenthesis, number_of_parenthesis);
@@ -227,37 +225,43 @@ public class Calc_Scientific implements ActionListener {
 	}
 	public void number_maker(int i) {
 		if (i < 10) {
-		current_number = (int) ( i + current_number*10);
-		place_tracker++;
+			if(last_numb_special) {
+				number_number[number_number_tracker] = current_number;
+				op[number_number_tracker] = 2;
+				current_number = 0;
+				number_number_tracker++;
+			}
+				current_number =  i + current_number*10;
+				place_tracker++;
 		}
 		// FIX TO TREAT LIKE A FINISHED NUMBER --> Make finish the calculator first then come back to this
 		if (i == 11) {
 			if(current_number != 0) {
-			current_number = (int) ( Math.PI * current_number);
-			System.out.println("Current number: " + current_number);
+			current_number = Math.PI * current_number;
 			}
 			if(current_number == 0) {
-				current_number = (int) ( Math.PI);
-				System.out.println("Current number: " + current_number);
+				current_number =  Math.PI;
 			}
+			if(!last_numb_special) {
 			prespecial = number_of_parenthesis;
-			number_number[number_number_tracker] = current_number;
-			parenthesis[number_number_tracker] = number_of_parenthesis;
+			}
 			number_of_parenthesis++;
-			System.out.println(Math.PI);
+			parenthesis[number_number_tracker] = number_of_parenthesis;
+			last_numb_special = true;
 		}
 		if (i == 12) {
 			if(current_number != 0) {
-			current_number = (int) ( Math.E * current_number);
+			current_number = Math.E * current_number;
 			}
 			if(current_number == 0) {
-				current_number = (int) ( Math.E);
+				current_number = Math.E;
 			}
+			if(!last_numb_special) {
 			prespecial = number_of_parenthesis;
-			number_number[number_number_tracker] = current_number;
-			parenthesis[number_number_tracker] = number_of_parenthesis;
+			}
 			number_of_parenthesis++;
-			System.out.println("e");
+			parenthesis[number_number_tracker] = number_of_parenthesis;
+			last_numb_special = true;
 		}
 		more_than_one = false;
 		System.out.println("current_number "+current_number);
@@ -271,6 +275,7 @@ public class Calc_Scientific implements ActionListener {
 			current_number = 0;
 			parenthesis[number_number_tracker] = number_of_parenthesis;
 			number_number_tracker++;
+			
 			if(prespecial !=0) {
 				number_of_parenthesis -= prespecial;
 				prespecial = 0;
@@ -289,6 +294,7 @@ public class Calc_Scientific implements ActionListener {
 					levels_of_parenthesis = parenthesis[n];
 				}
 			}
+			@SuppressWarnings("unchecked")
 			BiFunction<Double, Double, Double>[] operations = new BiFunction[4];
 			operations[0] = (a, b) -> a + b;
 			operations[1] = (a, b) -> a - b;
@@ -304,8 +310,7 @@ public class Calc_Scientific implements ActionListener {
 					    
 					    if (parenthesis[n+1] != j ) {
 						    	right = 0;
-						
-						    }
+						 }
 					    
 					    System.out.println("operands=[" + left + ", " + right + "]");
 					    BiFunction<Double, Double, Double> fn = operations[(int) op[n]];
