@@ -7,12 +7,8 @@ public class Main {
 	static JFrame window = new JFrame();
 
 	public static void main(String[] args) {
-		
-		window.setSize(300, 400);
-		window.setLocationRelativeTo(null);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
-		window.setLayout(null);
+		// this is the main function all it does is tell it to go to the calc-portal
+		// later I plan to have the ability to have memory and save where you are
 		
 		Calc_portal p = new Calc_portal();
 		p.Start();
