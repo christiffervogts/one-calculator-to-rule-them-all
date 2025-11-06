@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("unused")
-public class Calc_home implements ActionListener, KeyListener {
-
+public class Calc_home implements ActionListener, KeyListener { // this is cald calc home as a vestige from when this was just a small 
+	//calculator project. but this is the Large number calculator, it is only a for fuction calculator, if I get borad I'll comeback and add more
 	Calc_portal cp = new Calc_portal();
 	
 	JButton[] numb = new JButton[10];
@@ -31,8 +31,6 @@ public class Calc_home implements ActionListener, KeyListener {
 	int result_tracker = 0;
 	int result_tracker_length;
 	int current_number;
-	int last_number;
-	int current_number_screen;
 	int result_number;
 	int left;
 	int right;
@@ -193,27 +191,40 @@ public class Calc_home implements ActionListener, KeyListener {
 		Main.window.add(screen);
 	}
 	
-	public void number_maker(int i) {
+	public void number_maker(int i) { // this is where the numbers get made. since when we type in numbers we type them in 1 -> 13 -> 135
+		// all that we are acutlly doing is is saying add 1 -> multiply by 10 the add 3 -> multiply by 10 and add 5 so that is what this does
 		current_number = (int) ( i + current_number*10);
-		place_tracker++;
+		place_tracker++; // this tells us the largest place value
 		
-		if(place_tracker > 15) {
-			current_number = (int) (current_number/ Math.pow(10, 15));
+		if(place_tracker > 15) { //since java has a limit to how bid a double can be if it gets to larger then 15 digits
+			//then it will be devided by 10^15 
+			current_number =  (current_number/ (int)(Math.pow(10, 14)));
 			
 			number_of_times_devided++;
 			place_tracker = 1;
 		}
 		
-		more_than_one = false;
+		more_than_one = false;// bool for screen
 		System.out.println("current_number "+current_number);
 		world_counter("number_maker", 10);
 	}
 
 	public void number_changer(int i) {
-		
-		if(i <= 3) {
+			/* everything gets stored in arrays. so say I am trying to add 22+14 this goes by 
+			* first you write 22 then it comes down here and you press the "+" button and that gives us i = 0. 
+			* Then current number = 22 will change to the array for number position 0 = 22 which is 
+			* written as number_number[number_number_tracker] = current number, where number_number is the array for the numbers and 
+			* number_number_tracker is the variable used to travle arcross the array. it is called number_number_tracker because 
+			* it tracks the possition of the array number_number_tracker. the operation gets stored into op; short for operation.
+			* then we go on and type the next number, 14. Once we press the = button the entire number_number array and the op array 
+			* come into focuse. the first two numbers in the number_number array are take and assind left and right. Then left and right are
+			* preformed whatever operation is needed and put into the result array. then once right > number_number_tracker whatever
+			* operation that is needed will be preformed on the result array to give us the result. 
+			*/
+		if(i <= 3) { // after the number is decided you give it an operation 
+			
 			more_than_one = false;
-			op[op_tracker] = i;
+			op[op_tracker] = i; 
 			number_number[number_number_tracker] = current_number;
 			number_number_tracker++;
 			op_tracker++;
@@ -222,8 +233,7 @@ public class Calc_home implements ActionListener, KeyListener {
 			
 		}
 
-		if (i == 4) {
-		// ADD:  make a more button
+		if (i == 4) {// splits the number_number array into left and right and find the result
 		    
 			number_number[number_number_tracker] = current_number; 
 			number_number_tracker++; 
@@ -278,7 +288,7 @@ public class Calc_home implements ActionListener, KeyListener {
 			world_counter("number_changer", i);
 			
 		}
-		if (i == 5) {
+		if (i == 5) {//this is the clear button and sets all values back to zero
 			tracker = 0;
 			number_number_tracker = 0;
 			op_tracker = 0;
@@ -291,7 +301,7 @@ public class Calc_home implements ActionListener, KeyListener {
 			computed = 0;
 			number_of_times_devided = 0;
 		}
-		if (i == 6) {
+		if (i == 6) {//this sets us back to the portal
 			for (int n = 0; n <func.length; n++) {
 			Main.window.remove(func[n]);
 			}
@@ -301,36 +311,29 @@ public class Calc_home implements ActionListener, KeyListener {
 			Main.window.remove(screen);
 			cp.Start();
 		}
-		if (i == 7) {
+		if (i == 7) {//this is just a basic random number genrator
 			result_number = (int) (Math.random() * 101); 
-
 
 			System.out.println("OUTPUT:   "+result_number +"  Number number tracker: " + result_tracker_length);
 
 		}
-
 	}
-	public void keyTyped(KeyEvent e) {
-	}
-
-	public void keyPressed(KeyEvent e) {
-		
-	}
-
-	public void keyReleased(KeyEvent e) {
-		
-	}
-
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {// when a button is pressed the next step gets decided
 		for(int i = 0; i < numb.length; i++) {
-			if (e.getSource() == numb[i]) {
+			if (e.getSource() == numb[i]) {//sends it down to make it into a number
 				number_maker(i);
 			}
 		}
 		for(int i = 0; i < func.length; i++) {
-			if (e.getSource() == func[i]) {
+			if (e.getSource() == func[i]) {//tells us it is an operation
 				number_changer(i);
 			}
 		}
 	}
+	@Override
+	public void keyTyped(KeyEvent e) {}
+	@Override
+	public void keyPressed(KeyEvent e) {}
+	@Override
+	public void keyReleased(KeyEvent e) {}
 }
