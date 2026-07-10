@@ -1,0 +1,393 @@
+package main;
+
+import java.awt.event.*;
+import java.util.Arrays;
+import java.util.function.BiFunction;
+import javax.swing.JButton;
+
+public class Calc_Scientific implements ActionListener {
+
+	Calc_portal cp = new Calc_portal();
+	
+	JButton[] numb = new JButton[13];
+	JButton[] func = new JButton[20];
+	
+	String[] name = new String[20];
+	
+	int x;
+	int y;
+	int sizex;
+	int sizey;
+	int tracker;
+	int place_tracker;
+	int number_number_tracker = 0;
+	int result_tracker = 0;
+	int result_tracker_length;
+	double current_number;
+	double result_number;
+	double computed;
+	double left;
+	double right;
+	double prespecial;
+	int number_of_parenthesis = 1;
+	double[]number_number = new double[999];
+	double[]op = new double[998];
+	int[] parenthesis = new int[999]; 
+	double[] result = new double[999];
+	double[] order = new double[999];
+	double number_of_times_devided;
+	boolean more_than_one = true;
+	boolean degrees;
+	boolean last_one_current_number = true;
+	boolean last_numb_special = false;
+	
+	public void start(){
+		Arrays.fill(parenthesis, number_of_parenthesis);
+		for (int i = 0; i < numb.length; i++) {
+			if(i == 0) {
+				x = 380;
+				y = 500;
+				name[i] = Integer.toString(i);
+			}
+			if (0 < i && i < 4)  {
+				
+				x = 250 + (65*i);
+				y = 435;
+				name[i] = Integer.toString(i);
+			}
+			if (3 < i && i < 7)  {
+				
+				x = 250 + (65*(i-3));
+				y = 370;
+				name[i] = Integer.toString(i);
+			}	
+			if (6 < i && i < 10) {
+				x = 250 + (65*(i-6));
+				y = 305;
+				name[i] = Integer.toString(i);
+			}
+			if(i == 11) {
+				x = 120;
+				y = 500;
+				name[i] = "\u03C0";
+			}
+			if(i == 12) {
+				x = 185;
+				y = 500;
+				name[i] = "e";
+			}
+			
+			numb[i] = new JButton(name[i]);
+			numb[i].setSize(60, 60);
+			numb[i].setLocation((int)(x),(int)(y));
+			numb[i].addActionListener(this);
+			Main.window.add(numb[i]);
+
+		}
+		for (int i = 0; i < func.length; i++) {
+			
+			switch(i) {
+				case 0:
+					x = 510;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "+";
+				break;
+				case 1:
+					x = 510;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "-";
+				break;
+				case 2:
+					x = 510;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "X";
+				break;
+				case 3:
+					x = 510;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "\u00F7";
+				break;
+				case 4:
+					x = 445;
+					y = 500;
+					name[i] = "=";
+				break;
+				case 5:
+					x = 510;
+					y = 240;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "CA";
+				break;
+				case 6:
+					x = 185;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "(";
+				break;
+				case 7:
+					x = 250;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = ")";
+				break;
+				case 8:
+					x = 250;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "^";
+				break;
+				case 9:
+					x = 250;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "\u221A";
+				break;
+				case 10:
+					x = 250;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Log";
+				break;
+				case 11:
+					x = 120;
+					y = 305;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Sin";
+				break;
+				case 12:
+					x = 120;
+					y = 370;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Cos";
+				break;
+				case 13:
+					x = 120;
+					y = 435;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "Tan";
+				break;
+				case 14:
+					x = 315;
+					y = 240;
+					sizex = 60;
+					sizey = 60;
+					name[i] = "2\u207F\u1D48";
+				break;
+				case 15:
+					x = 380;
+					y = 240;
+					sizex = 125;
+					sizey = 60;
+					name[i] = "Portal";
+				break;
+				case 16:
+					x = 315;
+					y = 500;
+					sizex = 60;
+					sizey = 60;
+					name[i] = ".";
+				break;
+				case 17:
+					x = 185;
+					y = 240;
+					sizex = 125;
+					sizey = 60;
+					name[i] = "Dec";
+				break;
+
+			}
+
+			func[i] = new JButton(name[i]);
+			func[i].setSize((int)(sizex),(int)(sizey));
+			func[i].setLocation((int)(x),(int)(y));
+			func[i].addActionListener(this);
+			Main.window.add(func[i]);
+
+		}
+
+	}
+	public void number_maker(int i) {
+		if (i < 10) {
+			if(last_numb_special) {
+				number_number[number_number_tracker] = current_number;
+				op[number_number_tracker] = 2;
+				current_number = 0;
+				number_number_tracker++;
+			}
+				current_number =  i + current_number*10;
+				place_tracker++;
+		}
+		// FIX TO TREAT LIKE A FINISHED NUMBER --> Make finish the calculator first then come back to this
+		if (i == 11) {
+			if(current_number != 0) {
+			current_number = Math.PI * current_number;
+			}
+			if(current_number == 0) {
+				current_number =  Math.PI;
+			}
+			if(!last_numb_special) {
+			prespecial = number_of_parenthesis;
+			}
+			number_of_parenthesis++;
+			parenthesis[number_number_tracker] = number_of_parenthesis;
+			last_numb_special = true;
+		}
+		if (i == 12) {
+			if(current_number != 0) {
+			current_number = Math.E * current_number;
+			}
+			if(current_number == 0) {
+				current_number = Math.E;
+			}
+			if(!last_numb_special) {
+			prespecial = number_of_parenthesis;
+			}
+			number_of_parenthesis++;
+			parenthesis[number_number_tracker] = number_of_parenthesis;
+			last_numb_special = true;
+		}
+		more_than_one = false;
+		System.out.println("current_number "+current_number);
+	}
+	public void number_changer(int i) {
+		
+		if(i <= 3) {
+			more_than_one = false;
+			number_number[number_number_tracker] = current_number;
+			op[number_number_tracker] = i;
+			current_number = 0;
+			parenthesis[number_number_tracker] = number_of_parenthesis;
+			number_number_tracker++;
+			
+			if(prespecial !=0) {
+				number_of_parenthesis -= prespecial;
+				prespecial = 0;
+			}
+		}
+		if (i == 4) {
+			System.out.println("imputs: "+Arrays.toString(number_number));
+			System.out.println("operations: "+Arrays.toString(op));
+			System.out.println("Parenthesis: "+Arrays.toString(parenthesis));
+			number_number[number_number_tracker] = current_number;
+			current_number = 0;
+			number_number_tracker++;
+			int levels_of_parenthesis = 0;
+			for(int n = 0; n < number_number_tracker; n++) {
+				if( parenthesis[n] > levels_of_parenthesis) {
+					levels_of_parenthesis = parenthesis[n];
+				}
+			}
+			@SuppressWarnings("unchecked")
+			BiFunction<Double, Double, Double>[] operations = new BiFunction[4];
+			operations[0] = (a, b) -> a + b;
+			operations[1] = (a, b) -> a - b;
+			operations[2] = (a, b) -> a * b;
+			operations[3] = (a, b) -> b != 0 ? a / b : null;
+			for(int j = levels_of_parenthesis; j > 0; j--) {
+				for (int n = 0; n < number_number_tracker; n += 2) {
+					System.out.println("pass: " + n);
+					if(parenthesis[n] == j) {
+						
+					    left  = number_number[n];
+					    right = number_number[n + 1];
+					    
+					    if (parenthesis[n+1] != j ) {
+						    	right = 0;
+						 }
+					    
+					    System.out.println("operands=[" + left + ", " + right + "]");
+					    BiFunction<Double, Double, Double> fn = operations[(int) op[n]];
+					    result[result_tracker++] = fn.apply(left, right);
+					}
+				}
+			}
+			
+			System.out.println("levels of parenthesis: " + levels_of_parenthesis);
+			for (int t = 0; t < result_tracker; t++) {
+				result_number += result[t];
+			}
+			
+			System.out.println("OUTPUT:   "+result_number +"  Number number tracker: " + result_tracker_length);
+			Arrays.fill(number_number, 0);
+			number_number_tracker = 1;
+			number_number[0] = result[1];				
+			System.out.println();
+			System.out.println(Arrays.toString(parenthesis));
+
+		}
+		if (i == 5) {
+			tracker = 0;
+			number_number_tracker = 0;
+			result_tracker = 0;
+			Arrays.fill(number_number, 0);
+			Arrays.fill(parenthesis, 1);
+			Arrays.fill(op, 0);
+			Arrays.fill(result, 0);
+			computed = 0;
+			number_of_times_devided = 0;
+		}
+		if (i == 6) {
+			number_of_parenthesis++;
+		}
+		if (i == 7) {
+			number_of_parenthesis--;
+		}
+
+		if (i == 15) {
+			for (int n = 0; n <func.length; n++) {
+			Main.window.remove(func[n]);
+			}
+			for (int n = 0; n <numb.length; n++) {
+			Main.window.remove(numb[n]);
+			}
+			cp.Start();
+
+		}
+		if (i == 16) {
+			degrees = !degrees;
+			if (!degrees) {
+			func[16].setText("RAD");
+
+			}
+			if (degrees) {
+			func[16].setText("DEG");
+			}
+
+		}
+
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		for(int i = 0; i < numb.length; i++) {
+			if (e.getSource() == numb[i]) {
+				number_maker(i);
+			}
+		}
+		for(int i = 0; i < func.length; i++) {
+			if (e.getSource() == func[i]) {
+				number_changer(i);
+			}
+		}
+	}
+	
+}
