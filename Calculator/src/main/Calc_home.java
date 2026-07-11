@@ -130,14 +130,6 @@ public class Calc_home implements ActionListener, KeyListener { // this is cald 
 					sizey = 50;
 					name[i] = "Portal";
 				break;
-				case 7:
-					x = 165;
-					y = 80;
-					sizex = 105;
-					sizey = 50;
-					name[i] = "Ask God";
-				break;
-
 			}
 
 			func[i] = new JButton(name[i]);
