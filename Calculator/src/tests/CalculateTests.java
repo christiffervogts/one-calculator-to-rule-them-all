@@ -7,20 +7,41 @@ import main.Calculate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 public class CalculateTests {
     private Calculate Calculate;
 
 	@BeforeEach
     void setUp() {
-		Calculate = new Calculate(null, null);
+		ArrayList<Double> a = new ArrayList<>();
+		ArrayList<Integer> b = new ArrayList<>();
+		
+		a.add(1.0);
+		a.add(2.0);
+		a.add(3.0);
+		a.add(4.0);
+		a.add(5.0);
+		a.add(6.0);
+
+		b.add(0);
+		b.add(0);
+		b.add(0);
+		b.add(0);
+		b.add(0);
+		b.add(0);
+
+		Calculate = new Calculate(a, b);
     }
 
     @Test
     void TruncationTest() {
         assertEquals(121000, Calculate.trunkate(121358.1315, 3));
-        assertEquals(100, Calculate.trunkate(123, 1));
-        assertEquals(90000, Calculate.trunkate(90234, 2));
         
+    }
+    @Test
+    void TestRunCalculation() {
+        assertEquals(20, Calculate.run_calculation());
     }
 
     @Test

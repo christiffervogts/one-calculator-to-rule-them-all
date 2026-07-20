@@ -1,16 +1,18 @@
 package main;
 
-import java.awt.Color;
-import java.awt.event.*;
-import javax.swing.*;
-import java.math.*;
-import java.util.Arrays;
-import java.util.function.BiFunction;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JTextArea;
 
 @SuppressWarnings("unused")
-public class Calc_home implements ActionListener, KeyListener { // this is cald calc home as a vestige from when this was just a small 
+public class FourFunctionCalculator implements ActionListener, KeyListener { // this is cald calc home as a vestige from when this was just a small 
 	//calculator project. but this is the Large number calculator, it is only a for fuction calculator, if I get borad I'll comeback and add more
-	Calc_portal cp = new Calc_portal();
+	Portal cp = new Portal();
 	
 	JButton[] numb = new JButton[10];
 	JButton[] func = new JButton[8];
@@ -30,18 +32,21 @@ public class Calc_home implements ActionListener, KeyListener { // this is cald 
 	int op_tracker = 0;
 	int result_tracker = 0;
 	int result_tracker_length;
-	int current_number;
-	int result_number;
+	double current_number;
+	double result_number;
 	int left;
 	int right;
 	int computed;
-	int[] number_number = new int[999];
-	int[] result = new int[999];
-	int[] op = new int[999];
+	ArrayList<Double> numberList;
+	ArrayList<Integer> operationList;
+
+//	int[] number_number = new int[999];
+//	int[] result = new int[999];
+//	int[] op = new int[999];
 	int number_of_times_devided;
 	boolean more_than_one = true;
 	boolean last_one_current_number = true;
-	public Calc_home() {
+	public FourFunctionCalculator() {
 		buttons();
 	}
 	public void reset() {
@@ -139,53 +144,15 @@ public class Calc_home implements ActionListener, KeyListener { // this is cald 
 			Main.window.add(func[i]);
 
 		}
-		screen();
 		Main.window.repaint();
 		Main.window.revalidate();
 
 
 	}
-	public void world_counter(String source, int i) {
-
-		
-		if (source.contains("number_maker") && more_than_one) {
-		    text_area_string = Integer.toString(current_number);
-			screen.setText(text_area_string);  
-		    System.out.println(current_number);
-		}
-		if (source.contains("number_maker") && !more_than_one) {
-			System.out.println(text_area_string);
-			text_area_string = text_area_string.replaceAll(last_addition_to_string, Integer.toString(current_number));
-			last_addition_to_string = Integer.toString(current_number);
-			screen.setText(text_area_string);  
-			System.out.println(text_area_string);
-
-		}		
-		if (source.contains("number_changer") &&( i != 4 || i != 5 ) ) { 
-			text_area_string = number_number[number_number_tracker-1]  +" " +" "+ name[(int) op[op_tracker]];
-			screen.setText(text_area_string);  
-		}		
-		if (source.contains("number_changer") && i == 4) {
-			text_area_string = ""+result_number;
-			screen.setText(text_area_string);  
-			System.out.println("result!");
-		}
-	}
-	public void screen() {
-		
-		screen = new JTextArea();
-		
-		screen.setSize(225, 50);
-		screen.setLocation(50,25);
-		screen.setVisible(true);
-		screen.setEditable(false);
-		screen.setBackground(Color.gray);
-		Main.window.add(screen);
-	}
 	
 	public void number_maker(int i) { // this is where the numbers get made. since when we type in numbers we type them in 1 -> 13 -> 135
 		// all that we are acutlly doing is is saying add 1 -> multiply by 10 the add 3 -> multiply by 10 and add 5 so that is what this does
-		current_number = (int) ( i + current_number*10);
+		current_number = (int) ( i + (current_number*10));
 		place_tracker++; // this tells us the largest place value
 		
 		if(place_tracker > 15) { //since java has a limit to how bid a double can be if it gets to larger then 15 digits
@@ -198,7 +165,6 @@ public class Calc_home implements ActionListener, KeyListener { // this is cald 
 		
 		more_than_one = false;// bool for screen
 		System.out.println("current_number "+current_number);
-		world_counter("number_maker", 10);
 	}
 
 	public void number_changer(int i) {
@@ -216,78 +182,38 @@ public class Calc_home implements ActionListener, KeyListener { // this is cald 
 		if(i <= 3) { // after the number is decided you give it an operation 
 			
 			more_than_one = false;
-			op[op_tracker] = i; 
-			number_number[number_number_tracker] = current_number;
+			operationList.add(i); 
+			numberList.add((double)current_number);
 			number_number_tracker++;
 			op_tracker++;
 			current_number = 0;
-			world_counter("number_changer", 0);
 			
 		}
 
 		if (i == 4) {// splits the number_number array into left and right and find the result
 		    
-			number_number[number_number_tracker] = current_number; 
+			numberList.add((double) current_number);; 
 			number_number_tracker++; 
 			current_number = 0;
 			tracker = number_number_tracker;
 
-			@SuppressWarnings("unchecked")
-			BiFunction<Integer, Integer, Integer>[] operations = new BiFunction[4];
-			operations[0] = (a, b) -> a + b;
-			operations[1] = (a, b) -> a - b;
-			operations[2] = (a, b) -> a * b;
-			operations[3] = (a, b) -> b != 0 ? a / b : null;
-
-			int n = 0;
-			for (int x = 0; x < number_number_tracker; x += 2) {
-
-			    left  = number_number[x];
-			    right = number_number[x + 1];
-			    
-			    if (n !=0) {
-				    if (op[n] == 1) {
-				    	left = -number_number[x];
-				    }
-			    }
-			    System.out.println("operands=[" + left + ", " + right + "]");
-			    BiFunction<Integer, Integer, Integer> fn = operations[(int) op[n]];
-			    result[result_tracker++] = fn.apply(left, right);
-			    
-			    if (number_of_times_devided != 0) {
-			        computed *= number_of_times_devided;
-			        System.out.println("BIG NUMBER");
-			    }
-			    n += 1;
-			}        
-						
-			System.out.println(Arrays.toString(number_number));
-			System.out.println(Arrays.toString(op));
-			System.out.println(Arrays.toString(result));
+			Calculate clac = new Calculate(numberList, operationList);
 			
-		for (int t = 0; t < result_tracker; t++) {
+			result_number = clac.run_calculation();
 			
-			result_number += result[t];
-
-		}
-		
-		System.out.println("OUTPUT:   "+result_number +"  Number number tracker: " + result_tracker_length);
-
-			Arrays.fill(number_number, 0);
-			number_number_tracker = 1;
-			op_tracker = 0;
-			number_number[0] = result[1];
-			world_counter("number_changer", i);
+			System.out.println(numberList);
+			System.out.println(operationList);
+			System.out.println(result_number);
 			
-		}
+				}
 		if (i == 5) {//this is the clear button and sets all values back to zero
 			tracker = 0;
 			number_number_tracker = 0;
 			op_tracker = 0;
 			result_tracker = 0;
-			Arrays.fill(number_number, 0);
-			Arrays.fill(result, 0);
-			Arrays.fill(op, 0);
+//			Arrays.fill(number_number, 0);
+//			Arrays.fill(result, 0);
+//			Arrays.fill(op, 0);
 			left = 0;
 			right = 0;
 			computed = 0;
