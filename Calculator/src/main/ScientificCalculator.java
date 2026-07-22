@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 import javax.swing.JButton;
 
-public class Calc_Scientific implements ActionListener {
+public class ScientificCalculator implements ActionListener {
 
-	Calc_portal cp = new Calc_portal();
+	Portal cp = new Portal();
 	
 	JButton[] numb = new JButton[13];
 	JButton[] func = new JButton[20];

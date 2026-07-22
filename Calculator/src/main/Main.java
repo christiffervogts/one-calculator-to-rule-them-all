@@ -10,7 +10,7 @@ public class Main {
 		// this is the main function all it does is tell it to go to the calc-portal
 		// later I plan to have the ability to have memory and save where you are
 		
-		Calc_portal p = new Calc_portal();
+		Portal p = new Portal();
 		p.Start();
 		
 		

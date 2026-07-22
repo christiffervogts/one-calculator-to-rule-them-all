@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-public class Calc_portal implements ActionListener{
+public class Portal implements ActionListener{
 
 	
 	JButton[] Types = new JButton[3];
@@ -28,7 +28,7 @@ public class Calc_portal implements ActionListener{
 		for (int i = 0; i < 2; i++) { 
 			// Although it seams like over kill for just two types the idea is that this is an easier way of 
 			// implementing more types later on.
-			
+		
 			switch(i){
 			
 			case 0:
@@ -60,19 +60,19 @@ public class Calc_portal implements ActionListener{
 		//dealte everything -> send user to correct place
 
 		if (e.getSource() == Types[0]) {
-			Calc_home ch = new Calc_home();
+			FourFunctionCalculator ch = new FourFunctionCalculator();
 			Main.window.setSize(300, 400);
 			for (int i = 0; i < Types.length-1; i++) {
 			Main.window.remove(Types[i]);
 			}
-			Main.window.setTitle("Large Numbers");
+			Main.window.setTitle("Four Function");
 			Main.window.repaint();
 			Main.window.revalidate();
 			
 			ch.reset();
 		}
 		if (e.getSource() == Types[1]) {
-			Calc_Scientific cs = new Calc_Scientific();
+			ScientificCalculator cs = new ScientificCalculator();
 			Main.window.setSize(600, 600);
 			for (int i = 0; i < Types.length-1; i++) {
 			Main.window.remove(Types[i]);
