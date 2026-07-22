@@ -39,10 +39,6 @@ public class CalculateTests {
         assertEquals(121000, Calculate.trunkate(121358.1315, 3));
         
     }
-    @Test
-    void TestRunCalculation() {
-        assertEquals(20, Calculate.run_calculation());
-    }
 
     @Test
     void root_NthRootOfTwoInt() {

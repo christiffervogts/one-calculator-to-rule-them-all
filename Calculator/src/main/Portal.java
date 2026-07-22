@@ -28,7 +28,7 @@ public class Portal implements ActionListener{
 		for (int i = 0; i < 2; i++) { 
 			// Although it seams like over kill for just two types the idea is that this is an easier way of 
 			// implementing more types later on.
-			
+		
 			switch(i){
 			
 			case 0:

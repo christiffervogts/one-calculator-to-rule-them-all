@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,53 +10,57 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
-@SuppressWarnings("unused")
 public class FourFunctionCalculator implements ActionListener, KeyListener { // this is cald calc home as a vestige from when this was just a small 
-	//calculator project. but this is the Large number calculator, it is only a for fuction calculator, if I get borad I'll comeback and add more
+	//calculator project. but this is the four function calculator, it is only a for fuction calculator, if I get borad I'll comeback and add more
+//-----------------------------------------------------------------------------------------------//
 	Portal cp = new Portal();
+	
+	JTextArea display = new JTextArea();
 	
 	JButton[] numb = new JButton[10];
 	JButton[] func = new JButton[8];
-	JTextArea screen = new JTextArea();
 	
 	String[] name = new String[10];
-	String text_area_string = "";
-	String last_addition_to_string = "";
-
+	String Error;
+	String screenFull;
+	String screenPartial;
+	
 	int x;
 	int y;
 	int sizex;
 	int sizey;
 	int tracker;
 	int place_tracker;
-	int number_number_tracker = 0;
-	int op_tracker = 0;
-	int result_tracker = 0;
-	int result_tracker_length;
 	double current_number;
 	double result_number;
 	int left;
 	int right;
 	int computed;
-	ArrayList<Double> numberList;
-	ArrayList<Integer> operationList;
-
-//	int[] number_number = new int[999];
-//	int[] result = new int[999];
-//	int[] op = new int[999];
+	ArrayList<Double> numberList = new ArrayList<>();
+	ArrayList<Integer> operationList = new ArrayList<>();
+	
+	Result result;
+	
 	int number_of_times_devided;
-	boolean more_than_one = true;
-	boolean last_one_current_number = true;
-	public FourFunctionCalculator() {
-		buttons();
-	}
+	boolean ansActive = false;
+
 	public void reset() {
 	    Main.window.getContentPane().removeAll();
-	    buttons(); 
+	    setup(); 
 	    Main.window.repaint();
 	    Main.window.revalidate();
 	}
-	public void buttons() {
+	public void setup() {
+		System.out.println("afbaibf");
+		Main.window.getContentPane().setBackground(new Color(255, 200, 112));
+		operationList.add(0);
+	    display.setEditable(false);
+	    display.setSize(200, 40);
+	    display.setLocation(55, 30);
+	    display.setBackground(new Color(248, 228, 194));
+		
+
+		Main.window.add(display);
 		for (int i = 0; i < numb.length; i++) {
 			if(i == 0) {
 				x = 110;
@@ -82,6 +87,7 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 			numb[i].setSize(50, 50);
 			numb[i].setLocation(x, y);
 			numb[i].addActionListener(this);
+			numb[i].setBackground(new Color(83, 122, 171));
 			Main.window.add(numb[i]);
 
 		}
@@ -141,9 +147,13 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 			func[i].setSize(sizex, sizey);
 			func[i].setLocation(x, y);
 			func[i].addActionListener(this);
+			func[i].setBackground(new Color(83, 122, 171));
+
 			Main.window.add(func[i]);
 
 		}
+		
+		
 		Main.window.repaint();
 		Main.window.revalidate();
 
@@ -152,7 +162,8 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 	
 	public void number_maker(int i) { // this is where the numbers get made. since when we type in numbers we type them in 1 -> 13 -> 135
 		// all that we are acutlly doing is is saying add 1 -> multiply by 10 the add 3 -> multiply by 10 and add 5 so that is what this does
-		current_number = (int) ( i + (current_number*10));
+		ansActive = false;
+		current_number = ( i + (current_number*10));
 		place_tracker++; // this tells us the largest place value
 		
 		if(place_tracker > 15) { //since java has a limit to how bid a double can be if it gets to larger then 15 digits
@@ -162,11 +173,11 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 			number_of_times_devided++;
 			place_tracker = 1;
 		}
-		
-		more_than_one = false;// bool for screen
-		System.out.println("current_number "+current_number);
-	}
+	    
+	    screenPartial = String.valueOf(current_number);
 
+	}
+	
 	public void number_changer(int i) {
 			/* everything gets stored in arrays. so say I am trying to add 22+14 this goes by 
 			* first you write 22 then it comes down here and you press the "+" button and that gives us i = 0. 
@@ -180,44 +191,45 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 			* operation that is needed will be preformed on the result array to give us the result. 
 			*/
 		if(i <= 3) { // after the number is decided you give it an operation 
-			
-			more_than_one = false;
+			if(ansActive) {
+				numberList.add(result_number);
+			}
 			operationList.add(i); 
 			numberList.add((double)current_number);
-			number_number_tracker++;
-			op_tracker++;
 			current_number = 0;
 			
 		}
 
-		if (i == 4) {// splits the number_number array into left and right and find the result
-		    
-			numberList.add((double) current_number);; 
-			number_number_tracker++; 
+		if (i == 4) {
+			
+			numberList.add((double) current_number);
+			
 			current_number = 0;
-			tracker = number_number_tracker;
 
-			Calculate clac = new Calculate(numberList, operationList);
+			Calculate calc = new Calculate(numberList, operationList);
 			
-			result_number = clac.run_calculation();
+			result = calc.run();
 			
-			System.out.println(numberList);
-			System.out.println(operationList);
+			result_number = result.number();
+			Error = result.message();
 			System.out.println(result_number);
+			System.out.println(Error);
 			
-				}
+			if(Error.contains("None")) {
+				System.out.println("SUCCSESS!: "+ String.valueOf(result_number));
+				display.setText(String.valueOf(result_number));
+			}
+			else {
+				display.setText(Error);
+			}
+			clear();
+			ansActive = true;
+			
+		}
 		if (i == 5) {//this is the clear button and sets all values back to zero
-			tracker = 0;
-			number_number_tracker = 0;
-			op_tracker = 0;
-			result_tracker = 0;
-//			Arrays.fill(number_number, 0);
-//			Arrays.fill(result, 0);
-//			Arrays.fill(op, 0);
-			left = 0;
-			right = 0;
-			computed = 0;
-			number_of_times_devided = 0;
+			clear();
+			turn();
+			ansActive = true;
 		}
 		if (i == 6) {//this sets us back to the portal
 			for (int n = 0; n <func.length; n++) {
@@ -226,25 +238,46 @@ public class FourFunctionCalculator implements ActionListener, KeyListener { // 
 			for (int n = 0; n <numb.length; n++) {
 			Main.window.remove(numb[n]);
 			}
-			Main.window.remove(screen);
 			cp.Start();
 		}
-		if (i == 7) {//this is just a basic random number genrator
-			result_number = (int) (Math.random() * 101); 
-
-			System.out.println("OUTPUT:   "+result_number +"  Number number tracker: " + result_tracker_length);
-
+	}
+	private void clear() {
+		while(!numberList.isEmpty()) {
+			numberList.remove(0);
+			operationList.remove(0);
 		}
+		
+		operationList.add(0);
+		screenFull = "";
+		screenPartial = "";
+
+	}
+	private void turn() {
+		
+		screenFull = "";
+		
+		for(int i = 0; i < numberList.size(); i++) {
+			screenFull += String.valueOf(numberList) + " ";
+			screenFull += func[operationList.get(i)].getText() + " ";
+		}
+		
+		screenFull = screenFull.replace("[", "").replace("]", "");
+		if(!ansActive) {			
+			display.setText(screenFull + " " + screenPartial);
+		}
+		
 	}
 	public void actionPerformed(ActionEvent e) {// when a button is pressed the next step gets decided
 		for(int i = 0; i < numb.length; i++) {
 			if (e.getSource() == numb[i]) {//sends it down to make it into a number
 				number_maker(i);
+				turn();
 			}
 		}
 		for(int i = 0; i < func.length; i++) {
 			if (e.getSource() == func[i]) {//tells us it is an operation
 				number_changer(i);
+				turn();
 			}
 		}
 	}
